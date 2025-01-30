@@ -1,10 +1,6 @@
 import { Hono } from "hono";
 import client, { createUser, createUserTable, getTables } from "./modules/db";
 
-import { AsyncLocalStorage } from "node:async_hooks";
-import { createMiddleware } from "hono/factory";
-
-// const app = new Hono()
 type Bindings = {
   // MY_BUCKET: R2Bucket;
   USERNAME: string;
