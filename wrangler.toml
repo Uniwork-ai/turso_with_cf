@@ -1,8 +1,11 @@
-# Converted from JSON to TOML format
 name = "login_w_turso"
 main = "src/index.ts"
 compatibility_date = "2025-01-30"
 compatibility_flags = ["nodejs_compat"]
+
+services = [
+  { binding = "unilib", service = "uniauth" }
+]
 
 [vars]
 USERNAME = "admin"
@@ -10,6 +13,8 @@ PASSWORD = "admin"
 PLATFORM_DB_URL = "https://uni-login-sukuna.turso.io"
 JIRA_DB_URL = "https://uni-login-sukuna.turso.io"
 TURSO_DATABASE_AUTH_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3MzgyNjQ3NDYsImlkIjoiZmY5ZGM3YjctZDJiZC00N2Q0LWE3ZTktODgwMjk3YTgwZTdlIn0.BkPA06Zu2SdVluIv3QDfXqnEpOMALMbHRH1Wlgs3IMH-Fym04XNRv5_StT1n4e2awQBHJnXDs6WUcOucthyaDg"
+COOKIE_SECRET = "z/NuP3F3FQ5iTOoMCEhQo0qABrikgxs++XLq6RnWQxc="
+
 
 # [kv_namespaces]
 #   [[kv_namespaces]]

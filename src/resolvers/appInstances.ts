@@ -21,6 +21,7 @@ interface AppInstanceBase {
   status: string | null;
   createdAt: string | null;
   updatedAt: string | null;
+  name: string | null;
 }
 
 // Input types for mutations
@@ -34,6 +35,7 @@ interface CreateAppInstanceInput {
   status?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
+  name?: string | null;
 }
 
 interface UpdateAppInstanceInput {
@@ -47,6 +49,7 @@ interface UpdateAppInstanceInput {
   status?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
+  name?: string | null;
 }
 
 // Resolver arg types
@@ -169,12 +172,13 @@ appInstanceRef.implement({
     status: t.field({ type: "String", resolve: (p) => p.status }),
     createdAt: t.field({ type: "String", resolve: (p) => p.createdAt }),
     updatedAt: t.field({ type: "String", resolve: (p) => p.updatedAt }),
+    name: t.field({ type: "String", resolve: (p) => p.name }),
   }),
 });
 
-const CreateAppInstanceInput = builder.inputRef<CreateAppInstance>(
-  "CreateAppInstanceInput"
-);
+const CreateAppInstanceInput = builder.inputRef<
+  Omit<CreateAppInstance, "instanceId">
+>("CreateAppInstanceInput");
 CreateAppInstanceInput.implement({
   fields: (t) => ({
     appId: t.id({ required: true }),
@@ -186,6 +190,7 @@ CreateAppInstanceInput.implement({
     status: t.string(),
     createdAt: t.string(),
     updatedAt: t.string(),
+    name: t.string(),
   }),
 });
 
@@ -204,6 +209,7 @@ UpdateAppInstanceInput.implement({
     status: t.string(),
     createdAt: t.string(),
     updatedAt: t.string(),
+    name: t.string(),
   }),
 });
 

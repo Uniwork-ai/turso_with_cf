@@ -8,6 +8,13 @@
       "when": 1738401478845,
       "tag": "0000_create init table",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1738430073256,
+      "tag": "0001_add_name_column_to_appInstances",
+      "breakpoints": true
     }
   ]
 }

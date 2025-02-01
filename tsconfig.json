@@ -3,7 +3,7 @@
     "target": "ESNext",
     "module": "commonjs",
     "esModuleInterop": true,
-    "strict": true,
+    "strict": false,
     "skipLibCheck": true,
     "lib": ["ESNext"],
     "types": ["@cloudflare/workers-types/2023-07-01"],

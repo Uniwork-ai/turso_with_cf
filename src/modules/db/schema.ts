@@ -44,6 +44,7 @@ export const appInstances = sqliteTable(
     status: text("status").default("active"),
     createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
     updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+    name: text("name"),
   },
   (table) => [
     index("idx_app_instances_org").on(table.orgId),

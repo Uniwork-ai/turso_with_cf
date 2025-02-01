@@ -1,15 +1,20 @@
 import { createYoga } from "graphql-yoga";
 import { Hono } from "hono";
 import { schema } from "./schema";
+import { createAuthRoutes } from "./routes";
+import { authMiddleware } from "./modules/core/middlewares";
+import { cors } from "hono/cors";
 // import client, { createUser, createUserTable, getTables } from "./modules/db";
 
-type Bindings = {
+export type Bindings = {
   // MY_BUCKET: R2Bucket;
   USERNAME: string;
   PASSWORD: string;
   PLATFORM_DB_URL: string;
   TURSO_DATABASE_AUTH_TOKEN: string;
   JIRA_DB_URL: string;
+  unilib: any;
+  COOKIE_SECRET: string;
 };
 
 interface Context {
@@ -31,10 +36,12 @@ export const getCtx = (): Context => {
   return globalCtx;
 };
 
+app.use("*", cors({ origin: "http://localhost:5173", credentials: true }));
+
 app.use("*", async (c, next) => {
   const tenantId = c.req.header("X-Tenant-Id");
   if (!tenantId) {
-    return c.text("Tenant ID is required", 400);
+    return c.json({ error: "Tenant ID is required" }, 400);
   }
   globalCtx = {
     env: c.env,
@@ -42,6 +49,12 @@ app.use("*", async (c, next) => {
   };
   await next();
 });
+
+// public routes
+createAuthRoutes(app);
+
+// private routes
+app.use("*", authMiddleware);
 
 app.use("/graphql", async (context) => {
   const req = context.req.raw;
@@ -53,6 +66,7 @@ app.use("/graphql", async (context) => {
   // @ts-ignore
   return yoga.handle(req, graphqlContext);
 });
+
 // Access to environment values
 app.put("/upload/:key", async (c, next) => {
   const key = c.req.param("key");
