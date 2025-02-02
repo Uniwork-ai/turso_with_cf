@@ -104,3 +104,24 @@ export const workspaces = sqliteTable(
     }),
   ]
 );
+
+export const themes = sqliteTable(
+  "themes",
+  {
+    themeId: text("theme_id").primaryKey().notNull(),
+    orgId: text("org_id").notNull(),
+    appInstanceId: text("app_instance_id"),
+    theme: text("theme"), // JSON stored as text
+    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("idx_themes_org").on(table.orgId),
+    index("idx_themes_app_instance").on(table.appInstanceId),
+    foreignKey({
+      columns: [table.appInstanceId],
+      foreignColumns: [appInstances.instanceId],
+      name: "themes_app_instance_id_fkey",
+    }),
+  ]
+);

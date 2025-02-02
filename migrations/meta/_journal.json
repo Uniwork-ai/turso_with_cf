@@ -15,6 +15,13 @@
       "when": 1738430073256,
       "tag": "0001_add_name_column_to_appInstances",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1738500699244,
+      "tag": "0002_create themes table",
+      "breakpoints": true
     }
   ]
 }

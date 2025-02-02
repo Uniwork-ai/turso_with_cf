@@ -36,7 +36,13 @@ export const getCtx = (): Context => {
   return globalCtx;
 };
 
-app.use("*", cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(
+  "*",
+  cors({
+    origin: ["http://localhost:5173", "https://zuno.uniwork.ai.dev:5173"],
+    credentials: true,
+  })
+);
 
 app.use("*", async (c, next) => {
   const tenantId = c.req.header("X-Tenant-Id");
@@ -54,7 +60,7 @@ app.use("*", async (c, next) => {
 createAuthRoutes(app);
 
 // private routes
-app.use("*", authMiddleware);
+// app.use("*", authMiddleware);
 
 app.use("/graphql", async (context) => {
   const req = context.req.raw;

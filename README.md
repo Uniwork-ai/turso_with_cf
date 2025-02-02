@@ -32,8 +32,8 @@ turso db tokens create uni-login
 for production, ~~use --config drizzle.prod.config.ts args~~ we use dotenv to load the .env file based on the environment
 
 ```
-npx drizzle-kit generate
-npx drizzle-kit migrate --name "create users table"
+npx drizzle-kit generate --name "create users table"
+npx drizzle-kit migrate
 npx drizzle-kit studio
 npx drizzle-kit push
 ```

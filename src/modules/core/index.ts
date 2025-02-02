@@ -325,5 +325,23 @@ export const getApps = () => {
       created_at: "2025-01-26 10:21:47.890424+00",
       updated_at: "2025-01-26 10:21:47.890424+00",
     },
+    {
+      app_id: "b921d5f7-7df7-44c4-9e07-91007361627c",
+      category: "Tech",
+      created_at: "2025-02-02 13:10:44.990522+00",
+      created_by: "d654e6ba-70a3-48ef-a95d-37c8d8a79013",
+      description: "Main platform",
+      frontend_url: "https://uniwork.zuno.com/apps/tasks",
+      keywords: null,
+      logo_url: null,
+      name: "platform",
+      status: "approved",
+      subcategory: null,
+      suitable_workspaces: null,
+      team_type: "internal",
+      type: "standalone",
+      updated_at: "2025-02-02 13:10:44.990522+00",
+      version: "1",
+    },
   ];
 };

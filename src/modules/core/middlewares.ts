@@ -1,5 +1,5 @@
 import { Context, Next } from "hono";
-import { getSignedCookie } from "hono/cookie";
+import { deleteCookie, getSignedCookie } from "hono/cookie";
 
 export const authMiddleware = async (c: Context, next: Next) => {
   const accessToken = await getSignedCookie(
@@ -9,19 +9,26 @@ export const authMiddleware = async (c: Context, next: Next) => {
   );
   console.log("accessToken: verification", accessToken);
   if (!accessToken) {
+    clearCookie(c);
     return c.json({ error: "Unauthorized" }, 401);
   }
   const resp = await c.env.unilib.verifyFirebaseIdToken(accessToken);
   const claims = await resp.json();
   //   console.log(claims);
   if (!claims) {
-    return c.json({ error: "Invalid access token" }, 400);
+    clearCookie(c);
+    return c.json({ error: "Invalid access token" }, 401);
   }
   // assert that tenantId from claims matches the tenantId from the request is same
   if (claims.firebase.tenant !== c.req.header("X-Tenant-Id")) {
-    return c.json({ error: "Invalid tenant ID" }, 400);
+    clearCookie(c);
+    return c.json({ error: "Invalid tenant ID" }, 401);
   }
   await next();
+};
+
+const clearCookie = (c: Context) => {
+  deleteCookie(c, "accessToken");
 };
 
 /*

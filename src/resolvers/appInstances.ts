@@ -1,13 +1,14 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { builder, Context } from "../builder";
 import { getDB } from "../modules/db/index";
-import { appInstances, workspaces } from "../modules/db/schema";
+import { appInstances, themes, workspaces } from "../modules/db/schema";
 import {
   Workspace,
   workspaceRef,
   workspaceRef as WorkspaceRef,
 } from "./workspaces";
 import { nanoid } from "nanoid";
+import { themeRef } from "./themes";
 
 // Base type for AppInstance
 interface AppInstanceBase {
@@ -55,6 +56,11 @@ interface UpdateAppInstanceInput {
 // Resolver arg types
 interface AppInstanceArgs {
   instanceId: string;
+}
+
+interface AppInstanceByAppIdArgs {
+  appId: string;
+  workspaceId?: string | null;
 }
 
 interface CreateAppInstanceArgs {
@@ -173,6 +179,18 @@ appInstanceRef.implement({
     createdAt: t.field({ type: "String", resolve: (p) => p.createdAt }),
     updatedAt: t.field({ type: "String", resolve: (p) => p.updatedAt }),
     name: t.field({ type: "String", resolve: (p) => p.name }),
+    theme: t.field({
+      type: themeRef,
+      resolve: async (parent) => {
+        const db = getDB();
+        const theme = await db
+          .select()
+          .from(themes)
+          .where(eq(themes.appInstanceId, parent.instanceId));
+        console.log("theme", theme);
+        return theme[0] || null;
+      },
+    }),
   }),
 });
 
@@ -225,6 +243,14 @@ builder.queryFields((t) => ({
     },
     resolve: getAppInstance,
   }),
+  appInstanceByAppId: t.field({
+    type: appInstanceRef,
+    args: {
+      appId: t.arg.id({ required: true }),
+      workspaceId: t.arg.id(),
+    },
+    resolve: getAppInstanceByAppId,
+  }),
 }));
 
 builder.mutationFields((t) => ({
@@ -267,6 +293,29 @@ const getAppInstance = async (
     .select()
     .from(appInstances)
     .where(eq(appInstances.instanceId, args.instanceId));
+  return appInstance.length > 0
+    ? deserializeAppInstanceData(appInstance[0])
+    : null;
+};
+
+const getAppInstanceByAppId = async (
+  _root: any,
+  args: AppInstanceByAppIdArgs,
+  ctx: Context
+) => {
+  const db = getDB();
+  const appInstance = await db
+    .select()
+    .from(appInstances)
+    .where(
+      and(
+        eq(appInstances.appId, args.appId),
+        // add this where condition only if args.workspaceId exist
+        args.workspaceId
+          ? eq(appInstances.workspaceId, args.workspaceId)
+          : undefined
+      )
+    );
   return appInstance.length > 0
     ? deserializeAppInstanceData(appInstance[0])
     : null;
