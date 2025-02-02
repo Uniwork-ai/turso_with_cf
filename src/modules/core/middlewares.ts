@@ -27,7 +27,7 @@ export const authMiddleware = async (c: Context, next: Next) => {
   await next();
 };
 
-const clearCookie = (c: Context) => {
+export const clearCookie = (c: Context) => {
   deleteCookie(c, "accessToken");
 };
 

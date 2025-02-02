@@ -6,6 +6,7 @@ import { eq, and, ilike } from "drizzle-orm";
 import { Bindings, getCtx } from "..";
 import { getApp, getOrgByTenantId } from "../modules/core";
 import { setCookie, setSignedCookie } from "hono/cookie";
+import { clearCookie } from "../modules/core/middlewares";
 
 export const createAuthRoutes = (app: Hono<{ Bindings: Bindings }>) => {
   app.post("/api/v1/app/:appName", async (c) => {
@@ -82,11 +83,18 @@ export const createAuthRoutes = (app: Hono<{ Bindings: Bindings }>) => {
     if (!params.accessToken) {
       return c.json({ error: "accessToken is required" }, 400);
     }
-    const resp = await c.env.unilib.verifyFirebaseIdToken(params.accessToken);
-    const claims = await resp.json();
-    if (!claims) {
-      return c.json({ error: "Invalid access token" }, 400);
+    console.log("revoking refresh tokens for user", userId, params.accessToken);
+    // const resp1 = await c.env.unilib.verifyFirebaseIdToken(params.accessToken);
+    // const claims = await resp1.json();
+    // if (!claims) {
+    //   return c.json({ error: "Invalid access token" }, 400);
+    // }
+    const resp2 = await c.env.unilib.revokeRefreshToken(userId);
+    if (resp2.status !== 200) {
+      return c.json({ error: "Failed to revoke refresh tokens" }, 500);
     }
+    clearCookie(c);
+    return c.json({ message: "Logged out successfully" });
   });
 };
 
