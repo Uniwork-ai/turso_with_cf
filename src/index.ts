@@ -39,14 +39,19 @@ export const getCtx = (): Context => {
 app.use(
   "*",
   cors({
-    origin: ["http://localhost:5173", "https://zuno.uniwork.ai.dev:5173"],
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3001",
+      "https://zuno.uniwork.ai.dev:5173",
+      "http://zuno.uniwork.ai.test:3001",
+    ],
     credentials: true,
   })
 );
 
 app.use("*", async (c, next) => {
   const tenantId = c.req.header("X-Tenant-Id");
-  if (!tenantId) {
+  if (tenantId) {
     return c.json({ error: "Tenant ID is required" }, 400);
   }
   globalCtx = {
