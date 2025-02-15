@@ -5,12 +5,14 @@
     "deploy": "wrangler deploy --minify"
   },
   "dependencies": {
+    "@apollo/server": "^4.11.3",
+    "@as-integrations/cloudflare-workers": "^1.0.2",
     "@libsql/client": "^0.14.0",
-    "@pothos/core": "^4.3.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.39.1",
-    "graphql-yoga": "^5.10.11",
+    "graphql": "^16.10.0",
+    "graphql-tag": "^2.12.6",
     "hono": "^4.6.19",
     "nanoid": "^5.0.9"
   },
