@@ -1,5 +1,6 @@
 import { Hono } from "hono";
-import { resolvers, typeDefs } from "./schema";
+import { typeDefs } from "./modules/graphql/schema";
+import { resolvers } from "./modules/graphql/resolver";
 import { createAuthRoutes } from "./routes";
 import { authMiddleware } from "./modules/core/middlewares";
 import { cors } from "hono/cors";
@@ -64,7 +65,6 @@ createAuthRoutes(app);
 
 // private routes
 // app.use("*", authMiddleware);
-
 const server = new ApolloServer<Context>({
   typeDefs,
   resolvers ,
