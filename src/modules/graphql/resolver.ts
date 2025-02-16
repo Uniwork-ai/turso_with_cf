@@ -1,8 +1,9 @@
 import { gql } from "graphql-tag";
 import { nanoid } from "nanoid";
 import { getDB } from "./../db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql, desc } from "drizzle-orm";
 import { users, workspaces, appInstances, accountAuditLogs, themes } from "../db/schema";
+import { Context } from "hono";
 
 
 export const resolvers = {
@@ -170,7 +171,12 @@ export const resolvers = {
         const db = getDB();
         const newLog = await db
           .insert(accountAuditLogs)
-          .values(serializeAccountAuditLogData(input))
+          .values(serializeAccountAuditLogData({
+            ...input,
+            auditId: nanoid(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          }))
           .returning();
         return newLog.length > 0 ? deserializeAccountAuditLogData(newLog[0]) : null;
       },
@@ -179,8 +185,11 @@ export const resolvers = {
         const db = getDB();
         const updatedLog = await db
           .update(accountAuditLogs)
-          .set(serializeAccountAuditLogData(input))
-          .where(eq(accountAuditLogs.auditId, input.auditId))
+          .set(serializeAccountAuditLogData({
+            ...input,
+            updatedAt: new Date().toISOString(),
+          }))
+          .where(eq(accountAuditLogs.logId, input.logId))
           .returning();
         return updatedLog.length > 0 ? deserializeAccountAuditLogData(updatedLog[0]) : null;
       },
@@ -249,6 +258,33 @@ export const resolvers = {
           .where(eq(users.userId, parent.userId));
         return user[0] ? deserializeUserData(user[0]) : null;
       },
+    },
+    User: {
+      assignedWorkspaces: async (parent: typeof users, _args: any, context: Context) => {
+        const db = getDB();
+        
+        const userWorkspaces = await db
+          .select()
+          .from(workspaces)
+          .where(
+            sql`json_array_contains(${workspaces.assignedUsers}, ${parent.userId})`
+          );
+
+        return userWorkspaces;
+      },
+
+      auditLogs: async (parent: typeof users, _args: any, context: Context) => {
+        const db = getDB();
+        
+        // Fetch audit logs for the user
+        const logs = await db
+          .select()
+          .from(accountAuditLogs)
+          .where(eq(accountAuditLogs.userId, parent.userId))
+          .orderBy(desc(accountAuditLogs.createdAt));
+
+        return logs;
+      }
     },
   };
 

@@ -47,6 +47,8 @@ export const typeDefs = gql`
     profileSettings: UserProfileSettings
     createdAt: String
     updatedAt: String
+    assignedWorkspaces: [Workspace!]
+    auditLogs: [AccountAuditLog!]
   }
 
   type UserGroups {
@@ -123,6 +125,10 @@ export const typeDefs = gql`
     createdAt: String
     updatedAt: String
     workspaceOrder: Int
+    parentWorkspace: Workspace
+    childWorkspaces: [Workspace!]
+    appInstances: [AppInstance!]
+    users: [User!]
   }
 
   type WorkspaceChildren {
@@ -265,7 +271,6 @@ export const typeDefs = gql`
     eventDescription: String!
     eventMetadata: EventMetadata!
     clientIp: String!
-    userAgent: String!
     oldState: OldState!
     newState: NewState!
     createdAt: String
@@ -286,14 +291,12 @@ export const typeDefs = gql`
   }
 
   input CreateAccountAuditLogInput {
-    auditId: ID!
     orgId: String!
     userId: ID!
     eventCategory: String!
     eventDescription: String!
-    eventMetadata: EventMetadataInput!
+    eventMetadata: EventMetadataInput
     clientIp: String!
-    userAgent: String!
     oldState: OldStateInput!
     newState: NewStateInput!
     createdAt: String
